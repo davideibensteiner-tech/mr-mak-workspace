@@ -33,7 +33,10 @@ export function macLocale(env = process.env) {
 export function commandSearchRoots(env = process.env, home = os.homedir()) {
   const roots = [];
   if (isWindows && env.APPDATA) roots.push(path.join(env.APPDATA, 'npm'));
-  if (isWindows) roots.push(path.join(env.LOCALAPPDATA || path.join(home, 'AppData', 'Local'), 'agy', 'bin'));
+  if (isWindows) {
+    const local = env.LOCALAPPDATA || path.join(home, 'AppData', 'Local');
+    roots.push(path.join(local, 'agy', 'bin'), path.join(local, 'pi-node', 'current'));
+  }
   roots.push(path.join(home, '.opencode', 'bin'), path.join(home, '.kimi-code', 'bin'), path.join(home, '.local', 'bin'));
   return roots;
 }

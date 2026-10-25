@@ -120,9 +120,9 @@ export class Sessions extends EventEmitter {
     const session = this.make({
       id: randomUUID(), agent, name: englishTitle(options.name, `Conversation ${this.items.size + 1}`),
       tabOrder: Math.max(-1, ...this.list().map(item => item.tabOrder)) + 1,
-      cwd, bypass: options.bypass === true, createdAt: now, lastInputAt: null, lastOutputAt: null,
+      cwd, bypass: agent !== 'pi' && options.bypass === true, createdAt: now, lastInputAt: null, lastOutputAt: null,
       effort: options.effort, group: groupLabel(options.group),
-      status: 'starting', nativeId: options.resumeId || (agent === 'claude' ? randomUUID() : null),
+      status: 'starting', nativeId: options.resumeId || (['claude', 'pi'].includes(agent) ? randomUUID() : null),
       open: true, pinned: false, updatedAt: now, preview: '', hasConversation: !!options.resumeId || !!options.initialPrompt, restoreError: null,
       attention: false, cols: Math.min(500, Math.max(20, options.cols || 90)), rows: Math.min(200, Math.max(5, options.rows || 32)),
     });
@@ -137,7 +137,7 @@ export class Sessions extends EventEmitter {
   }
 
   async importConversation({ agent, nativeId, name, cwd, pinned = false, bypass = false, group = null }) {
-    if (!['codex', 'claude', 'antigravity', 'opencode', 'kimi'].includes(agent) || typeof nativeId !== 'string' || !nativeId.trim()) throw new Error('Choose an agent and its native conversation ID.');
+    if (!['codex', 'claude', 'antigravity', 'opencode', 'kimi', 'pi'].includes(agent) || typeof nativeId !== 'string' || !nativeId.trim()) throw new Error('Choose an agent and its native conversation ID.');
     nativeId = nativeConversationId(nativeId.trim());
     if (agent === 'antigravity' && !validAntigravityId(nativeId)) throw new Error('Use the Antigravity conversation UUID from its /resume picker.');
     cwd = await workingFolder(cwd || this.repo);
@@ -145,7 +145,7 @@ export class Sessions extends EventEmitter {
     const existing = [...this.items.values()].find(item => item.agent === agent && item.nativeId === nativeId);
     if (existing) { existing.name = englishTitle(name, existing.name); existing.pinned = pinned; this.changed(existing); await this.persist(); return publicSession(existing); }
     const now = new Date().toISOString();
-    const session = this.make({ id: randomUUID(), agent, nativeId, name: englishTitle(name), cwd, bypass, pinned, group: groupLabel(group), open: false, status: 'stopped', createdAt: now, updatedAt: now, hasConversation: true, lastInputAt: null, lastOutputAt: null, preview: '', cols: 90, rows: 32, attention: false });
+    const session = this.make({ id: randomUUID(), agent, nativeId, name: englishTitle(name), cwd, bypass: agent !== 'pi' && bypass, pinned, group: groupLabel(group), open: false, status: 'stopped', createdAt: now, updatedAt: now, hasConversation: true, lastInputAt: null, lastOutputAt: null, preview: '', cols: 90, rows: 32, attention: false });
     this.items.set(session.id, session); this.changed(session); await this.persist();
     return publicSession(session);
   }

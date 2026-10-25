@@ -5,6 +5,7 @@
   "identifier": "com.mrmak.workspace",
   "build": {
     "beforeBuildCommand": "npm run desktop:prepare",
+    "beforeDevCommand": "npm run build",
     "frontendDist": "../desktop/splash"
   },
   "app": {

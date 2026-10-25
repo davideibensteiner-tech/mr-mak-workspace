@@ -19,6 +19,7 @@ export const AGENTS = [
   { id: 'claude', label: 'Claude Code', color: '#dba68c', command: 'claude', subscription: true },
   { id: 'antigravity', label: 'Antigravity', color: '#8ab4f8', command: 'agy', subscription: true },
   { id: 'opencode', label: 'OpenCode', color: '#c8d2dc', command: 'opencode', subscription: false },
+  { id: 'pi', label: 'Pi', color: '#f0b86e', command: 'pi', subscription: false },
   { id: 'kimi', label: 'Kimi', color: '#b3a3f7', command: 'kimi', subscription: true },
   { id: 'shell', label: shellLabel(), color: '#89b7ed', command: 'shell', subscription: false },
 ];
@@ -123,6 +124,14 @@ export function terminalCommand(agent, { bypass = false, resumeId, nativeId, eff
     if (bypass) args.push('--dangerously-skip-permissions');
     if (effort) args.push('--effort', effort);
     if (antigravityLog) args.push('--log-file', antigravityLog);
+  } else if (agent === 'pi') {
+    // Exact, preallocated IDs keep concurrent tabs independent, even before
+    // the first message is persisted. Never use --continue (latest session).
+    const id = resumeId || nativeId;
+    if (id && !/^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/.test(id)) throw new Error('Use the Pi session ID from /session, not a file path.');
+    if (id) args.push('--session-id', id);
+    args.push('--tui-mode', 'regular');
+    // Pi has no per-tool approval flag. Preserve its own project-trust flow.
   } else if (agent === 'kimi') {
     if (resumeId) args.push('--session', resumeId);
     if (bypass) args.push('--yolo');
@@ -147,7 +156,7 @@ export function childEnvironment(repo) {
   }
   // Drop host-agent identity from the parent so every terminal is an independent CLI.
   for (const key of Object.keys(env)) {
-    if (/^(CLAUDECODE|CLAUDE_CODE_ENTRYPOINT|CODEX_THREAD_ID|CODEX_TURN_ID|CODEX_SHELL|ANTIGRAVITY_AGENT|MRMAK_TOKEN|MRMAK_PARENT_PID)$/.test(key) || key.startsWith('MRMAK_OPENCODE_')) delete env[key];
+    if (/^(CLAUDECODE|CLAUDE_CODE_ENTRYPOINT|CODEX_THREAD_ID|CODEX_TURN_ID|CODEX_SHELL|ANTIGRAVITY_AGENT|MRMAK_TOKEN|MRMAK_PARENT_PID)$/.test(key) || /^PI_(SESSION_FILE|SESSION_ID|REASONING_LEVEL|PROVIDER|MODEL)$/.test(key) || key.startsWith('MRMAK_OPENCODE_')) delete env[key];
   }
   return env;
 }

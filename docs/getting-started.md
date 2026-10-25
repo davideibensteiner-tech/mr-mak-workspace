@@ -4,7 +4,7 @@ Mr. Mak is a local desktop workspace for working with several agents. Its files
 are ordinary project files, and its chats are ordinary CLI sessions. You can
 keep using the same agents outside the app.
 
-**Required before setup: Codex CLI, Claude Code CLI or OpenCode, installed and
+**Required before setup: Codex CLI, Claude Code CLI, OpenCode or Pi, installed and
 configured with your own account.** Use at least one to guide the setup below.
 The optional voice coordinator requires Codex specifically; Kimi is another
 available terminal integration.
@@ -36,6 +36,7 @@ your operating system:
 - [Codex CLI](https://developers.openai.com/codex/cli)
 - [Claude Code](https://code.claude.com/docs/en/setup)
 - [OpenCode](https://opencode.ai/docs/)
+- [Pi](https://pi.dev) — see [Pi integration](pi.md) for source-build availability
 
 [Kimi Code CLI](https://moonshotai.github.io/kimi-cli/en/) is available as an
 additional terminal integration after the base setup.
@@ -51,6 +52,13 @@ default browser with a click.
 
 Try: “Read the My Dream Game example and turn it into a small project plan for
 my game. Ask me for the missing game idea before replacing the example.”
+
+## Pi
+
+This source checkout also supports **Pi** in the agent picker. See
+[Pi setup, multiple agents, and session limitations](pi.md). The upstream v0.6.1
+installer needs a source rebuild to include this integration; until then, run
+`pi` inside a PowerShell chat.
 
 ## Subscriptions, API keys and OpenCode
 
@@ -161,6 +169,9 @@ Differences from Windows:
 Details of the port, verification and known limits: [macOS notes](macos.md).
 
 ## Build from source
+
+For repeatable native-window development, frontend watch builds, tests, and
+safe local updates, see [Local desktop development](development.md).
 
 From a fresh clone, `npm ci` installs both the frontend and local desktop
 service dependencies. Then `npm test` runs the service checks; no separate

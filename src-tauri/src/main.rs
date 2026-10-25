@@ -393,7 +393,8 @@ fn main() {
             let resource_dir = app.path().resource_dir()?;
             let runtime = resource_dir.join("runtime");
             let runtime_node = if cfg!(windows) { runtime.join("node.exe") } else { runtime.join("node") };
-            let (node, script, ui) = if runtime_node.is_file() {
+            // Development must use this checkout, not a stale staged release service.
+            let (node, script, ui) = if !cfg!(debug_assertions) && runtime_node.is_file() {
                 (runtime_node, runtime.join("service/main.mjs"), runtime.join("ui"))
             } else {
                 (PathBuf::from("node"), repo.join("desktop/service/main.mjs"), repo.join("dist"))

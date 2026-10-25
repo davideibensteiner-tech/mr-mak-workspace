@@ -25,11 +25,16 @@ try {
   $taskCodex = Get-Command codex -ErrorAction SilentlyContinue
   $taskClaude = Get-Command claude -ErrorAction SilentlyContinue
   $taskOpenCode = Get-Command opencode -ErrorAction SilentlyContinue
+  $taskPi = Get-Command pi -ErrorAction SilentlyContinue
+  if (-not $taskPi) {
+    $taskPiPath = Join-Path $env:LOCALAPPDATA 'pi-node/current/pi.ps1'
+    if (Test-Path -LiteralPath $taskPiPath) { $taskPi = Get-Item -LiteralPath $taskPiPath }
+  }
   Write-Host 'Mr. Mak Workspace setup'
   Write-Host ('Node: ' + [bool]$taskNode + ' | npm: ' + [bool]$taskNpm + ' | Rust (desktop source build only): ' + [bool]$taskCargo)
-  Write-Host ('Codex CLI: ' + [bool]$taskCodex + ' | Claude Code CLI: ' + [bool]$taskClaude + ' | OpenCode: ' + [bool]$taskOpenCode)
-  if (-not $taskCodex -and -not $taskClaude -and -not $taskOpenCode) {
-    throw 'Install and configure Codex CLI, Claude Code CLI or OpenCode before setting up this Workspace. See docs/getting-started.md.'
+  Write-Host ('Codex CLI: ' + [bool]$taskCodex + ' | Claude Code CLI: ' + [bool]$taskClaude + ' | OpenCode: ' + [bool]$taskOpenCode + ' | Pi: ' + [bool]$taskPi)
+  if (-not $taskCodex -and -not $taskClaude -and -not $taskOpenCode -and -not $taskPi) {
+    throw 'Install and configure Codex CLI, Claude Code CLI, OpenCode or Pi before setting up this Workspace. See docs/getting-started.md.'
   }
   if ($Mode -eq 'Check') {
     Write-Host 'The Windows installer needs no build toolchain. See docs/getting-started.md.'

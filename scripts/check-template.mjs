@@ -67,7 +67,7 @@ assert.deepEqual(JSON.parse(await read('.mcp.json')), { mcpServers: {} });
 assert.doesNotMatch(await read('.env.example'), /^\w+=(?!\s*$)\S+/m, 'The example env must contain no assigned values.');
 assert.match(await read('src/desktop/client.ts'), /defaultBypass: false/);
 assert.match(await read('desktop/service/server.mjs'), /defaultBypass: false/);
-assert.match(await read('desktop/service/sessions.mjs'), /bypass: options\.bypass === true/);
+assert.match(await read('desktop/service/sessions.mjs'), /bypass: agent !== 'pi' && options\.bypass === true/);
 assert.match(await read('desktop/service/sessions.mjs'), /pinned = false, bypass = false/);
 const readme = await read('README.md');
 assert.match(readme, /Mr\. Mak is small\.\s+<img src="docs\/assets\/mr-mak\.png"[^>]+>\s*$/);
